@@ -44,7 +44,7 @@ export class Home extends Component {
     };
 
     await API.get('/TotalCalories', {params: params })
-      .then(result => {this.setState({caloriesByTime: Number(result["data"])});
+      .then(result => {this.setState({caloriesByTime: Number(result["data"]["total"])});
       console.log(result)} )
       .catch(error => console.log(error))
   }
@@ -53,7 +53,10 @@ export class Home extends Component {
   async saveCalorieLog() {
     console.log(this.state.totalCalories);
     await API.post('/TotalCalories', {"calories" : this.state.totalCalories, "createdAt": new Date()})
-      .then(result => window.alert('Logged Successfully'))
+      .then(result => {
+        window.alert('Logged Successfully');
+        this.setState({totalCalories: 0});
+      })
       .catch(error => window.alert('Oops something went wrong'));
 
 
@@ -71,14 +74,14 @@ export class Home extends Component {
         <div className="col-6">
           <div>Current Calories</div>
           <div>{this.state.currentCalories} Calories</div>
-          <input onChange={this.onCalorieChange} />
+          <input onChange={this.onCalorieChange} value={this.state.newCalories}/>
           <button className="btn btn-primary" onClick={this.addCalories}>Add Calories</button>
 
         </div>
         <div className="col-6">
           <div>Current Exercise</div>
           <div> -{this.state.currentExercise} Calories</div>
-          <input onChange={this.onExerciseChange} />
+          <input onChange={this.onExerciseChange} value={this.state.newExercise} />
           <button className="btn btn-primary" onClick= {this.addExercise} >Add Exercise</button>
         </div>
         <div className="row"> </div>
@@ -91,11 +94,11 @@ export class Home extends Component {
         </div>
         <div className="col-6">
           <h1>Totals</h1>
-          <div>
-            <button onClick={() => this.getCaloriesByTime('Day')} className="btn btn-primary">Day</button>
-            <button onClick={() => this.getCaloriesByTime('Week')} className="btn btn-primary">Week</button>
-            <button onClick={() => this.getCaloriesByTime('Month')} className="btn btn-primary">Month</button>
-            <button onClick={() => this.getCaloriesByTime('Year')} className="btn btn-primary">Year</button>
+          <div className="flex flex-row justify-content-between">
+            <button onClick={() => this.getCaloriesByTime('day')} className="btn btn-primary mr-1">Day</button>
+            <button onClick={() => this.getCaloriesByTime('week')} className="btn btn-primary mr-1">Week</button>
+            <button onClick={() => this.getCaloriesByTime('month')} className="btn btn-primary mr-1">Month</button>
+            <button onClick={() => this.getCaloriesByTime('year')} className="btn btn-primary mr-1">Year</button>
           </div>
           <div>
             <div>Total Calories: {this.state.caloriesByTime}</div>
